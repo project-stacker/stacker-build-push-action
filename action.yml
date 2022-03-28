@@ -1,0 +1,25 @@
+name: 'Stacker build action'
+description: 'Builds OCI images via a declarative yaml format.'
+inputs:
+  version:
+    description: 'Which stacker version to use'
+    required: false
+    default: 'latest'
+  stackerfile:  # id of input
+    description: 'Which stackerfile to build'
+    required: false
+    default: 'stacker.yaml'
+  layer-type:
+    description: 'Set the output layer type (supported values: tar, squashfs) separated by whitespace'
+    required: false
+    default: "tar"
+  token:
+    description: 'Used to pull stacker release binaries'
+    required: false
+    default: ${{ github.token }}
+  substitutes:
+    description: 'The list of subtitutes to make in stacker file separated by whitespace, eg: ONE=1 TWO=2 THREE=3'
+    required: false
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

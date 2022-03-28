@@ -1,0 +1,12 @@
+test:
+    from:
+        type: docker
+        url: docker://centos:latest
+    run: |
+        echo "echoing substitutes"
+        echo "${{SUB1}}"
+        echo "$SUB2"
+        echo "$SUB3"
+        ls -al /
+        echo "Your layer is ${STACKER_LAYER_NAME}"
+        echo "success"

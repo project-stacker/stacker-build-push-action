@@ -1,0 +1,33 @@
+on: [push]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    name: Test stacker-build action
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run stacker-build with all inputs
+        uses: project-stacker/stacker-build-action@main
+        with:
+          stackerfile: 'test/stacker.yaml'
+          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+          layer-type: 'tar squashfs'
+
+      - name: Run stacker-build with only substitutes
+        uses: project-stacker/stacker-build-action@main
+        with:
+          stackerfile: 'test/stacker.yaml'
+          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+
+      - name: Run stacker-build with only layer-type
+        uses: project-stacker/stacker-build-action@main
+        with:
+          stackerfile: 'test/stacker_wo_subs.yaml'
+          layer-type: 'tar squashfs'
+
+      - name: Run stacker-build with only stackerfile
+        uses: project-stacker/stacker-build-action@main
+        with:
+          stackerfile: 'test/stacker_wo_subs.yaml'
+
