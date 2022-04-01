@@ -65,4 +65,3 @@ export async function makeAvailableInPath(download, version) {
     core.info(`Make ${cachedPath} available in path`);
     core.addPath(cachedPath);
 }
-

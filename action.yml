@@ -7,7 +7,7 @@ inputs:
     default: 'latest'
   stackerfile:  # id of input
     description: 'Which stackerfile to build'
-    required: false
+    required: true
     default: 'stacker.yaml'
   layer-type:
     description: 'Set the output layer type (supported values: tar, squashfs) separated by whitespace'
@@ -19,6 +19,21 @@ inputs:
     default: ${{ github.token }}
   substitutes:
     description: 'The list of subtitutes to make in stacker file separated by whitespace, eg: ONE=1 TWO=2 THREE=3'
+    required: false
+  tags:
+    description: 'Tags used when pushing to remote OCI registry, separated by whitespace'
+    required: false
+  url:
+    description: 'Remote registry URL, eg: docker://ghcr.io/myRepo'
+    required: false
+  username:
+    description: "Username for the remote registry"
+    required: false
+  password:
+    description: "Password for the remote registry"
+    required: false
+  skip-tls:
+    description: "Skip tls verify on unsecure http registry"
     required: false
 runs:
   using: 'node16'

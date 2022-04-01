@@ -1,33 +1,70 @@
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   ci:
     runs-on: ubuntu-latest
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     name: Test stacker-build action
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run stacker-build with all inputs
-        uses: project-stacker/stacker-build-action@main
+      - name: Run stacker-build with all build inputs
+        uses: ./
         with:
           stackerfile: 'test/stacker.yaml'
           substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
           layer-type: 'tar squashfs'
 
       - name: Run stacker-build with only substitutes
-        uses: project-stacker/stacker-build-action@main
+        uses: ./
         with:
           stackerfile: 'test/stacker.yaml'
           substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
 
       - name: Run stacker-build with only layer-type
-        uses: project-stacker/stacker-build-action@main
+        uses: ./
         with:
           stackerfile: 'test/stacker_wo_subs.yaml'
           layer-type: 'tar squashfs'
 
       - name: Run stacker-build with only stackerfile
-        uses: project-stacker/stacker-build-action@main
+        uses: ./
         with:
           stackerfile: 'test/stacker_wo_subs.yaml'
-
+      
+      - name: Run stacker-build with push and tags
+        uses: ./
+        with:
+          stackerfile: 'test/stacker_wo_subs.yaml'
+          tags: v1 latest
+          url: docker://localhost:5000/name/app
+          skip-tls: true
+      
+      - name: Run stacker-build with push, tags and substitutes
+        uses: ./
+        with:
+          stackerfile: 'test/stacker.yaml'
+          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+          tags: v1 latest
+          url: docker://localhost:5000/name/app
+          skip-tls: true
+      
+      - name: Run stacker-build with push, tags, substitutes and layer-type
+        uses: ./
+        with:
+          stackerfile: 'test/stacker.yaml'
+          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+          tags: v1 latest
+          url: docker://localhost:5000/name/app
+          layer-type: 'tar squashfs'
+          skip-tls: true
