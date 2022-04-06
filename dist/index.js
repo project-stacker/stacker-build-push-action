@@ -23691,6 +23691,39 @@ class StackerCLI {
             return res;
         });
     }
+    publish(stackerfile, layerType, substitutes, url, tags, username, password, skipTLS) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const args = ["--debug", "publish"];
+            layerType.forEach((layerType) => {
+                args.push("--layer-type");
+                args.push(layerType);
+            });
+            substitutes.forEach((substitute) => {
+                args.push("--substitute");
+                args.push(substitute);
+            });
+            args.push("--url");
+            args.push(url);
+            tags.forEach((tag) => {
+                args.push("--tag");
+                args.push(tag);
+            });
+            if (username) {
+                args.push("--username");
+                args.push(username);
+            }
+            if (password) {
+                args.push("--password");
+                args.push(password);
+            }
+            if (skipTLS) {
+                args.push("--skip-tls");
+            }
+            args.push("-f");
+            args.push(stackerfile);
+            return this.execute(args);
+        });
+    }
     execute(args, execOptions = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             let stdout = "";
@@ -23858,6 +23891,18 @@ function run() {
             layerTypeList = layerType.trim().split(/\s+/);
         }
         yield cli.build(stackerfile, layerTypeList, substitutesList);
+        var tagsList = [];
+        const tags = core.getInput("tags");
+        if (tags != "") {
+            tagsList = tags.trim().split(/\s+/);
+        }
+        const registryURL = core.getInput("url");
+        const username = core.getInput("username");
+        const password = core.getInput("password");
+        const skipTLS = core.getInput("skip-tls") === "true";
+        if (registryURL) {
+            yield cli.publish(stackerfile, layerTypeList, substitutesList, registryURL, tagsList, username, password, skipTLS);
+        }
     });
 }
 run().catch(core.setFailed);

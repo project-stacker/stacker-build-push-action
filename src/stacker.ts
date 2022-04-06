@@ -38,14 +38,56 @@ export class StackerCLI {
 
         const res = this.execute(args).then((res) => {
             if (res.exitCode == 0) {
-                core.info("printing oci layout index.json")
-                exec.exec('/bin/bash -c "cat oci/index.json | jq"', [])
+                core.info("printing oci layout index.json");
+                exec.exec('/bin/bash -c "cat oci/index.json | jq"', []);
             } 
 
-            return res
+            return res;
         })
 
-        return res
+        return res;
+    }
+
+    async publish(stackerfile: string, layerType: string[], substitutes: string[],
+        url: string, tags: string[], username: string, password: string, skipTLS: boolean): Promise<CommandResult> {
+        const args: string[] = ["--debug", "publish"];
+
+        layerType.forEach((layerType) => {
+            args.push("--layer-type");
+            args.push(layerType);
+        })
+
+        substitutes.forEach((substitute) => {
+            args.push("--substitute");
+            args.push(substitute);
+        });
+
+        args.push("--url");
+        args.push(url);
+
+        tags.forEach((tag) => {
+            args.push("--tag");
+            args.push(tag);
+        })
+
+        if (username) {
+            args.push("--username");
+            args.push(username);
+        }
+
+        if (password) {
+            args.push("--password");
+            args.push(password);
+        }
+
+        if (skipTLS) {
+            args.push("--skip-tls");
+        }
+
+        args.push("-f");
+        args.push(stackerfile);
+
+        return this.execute(args);
     }
 
     async execute(

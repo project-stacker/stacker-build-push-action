@@ -54,7 +54,21 @@ export async function run(): Promise<void> {
 
     await cli.build(stackerfile, layerTypeList, substitutesList);
 
-    
+    var tagsList: string[] = [];
+    const tags = core.getInput("tags");
+    if (tags != "") {
+        tagsList = tags.trim().split(/\s+/);
+    }
+
+    const registryURL = core.getInput("url");
+    const username = core.getInput("username");
+    const password = core.getInput("password");
+    const skipTLS = core.getInput("skip-tls") === "true";
+
+    if (registryURL) {
+        await cli.publish(stackerfile, layerTypeList, substitutesList,
+            registryURL, tagsList, username, password, skipTLS);
+    }
 }
 
 run().catch(core.setFailed);

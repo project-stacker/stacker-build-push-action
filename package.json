@@ -1,5 +1,5 @@
 {
-  "name": "stacker-build-action",
+  "name": "stacker-build-push-action",
   "version": "1.0.0",
   "description": "github action build OCI container images",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/project-stacker/stacker-build-action.git"
+    "url": "git+https://github.com/project-stacker/stacker-build-push-action.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/project-stacker/stacker-build-action/issues"
+    "url": "https://github.com/project-stacker/stacker-build-push-action/issues"
   },
-  "homepage": "https://github.com/project-stacker/stacker-build-action#readme",
+  "homepage": "https://github.com/project-stacker/stacker-build-push-action#readme",
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/exec": "^1.1.1",
