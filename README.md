@@ -17,10 +17,10 @@ For more information about stacker tool see: https://github.com/project-stacker/
 | stackerfile | the yaml file to be built as an OCI image, example: [stacker.yaml](./test/stacker.yaml)  | stacker.yaml
 | layer-type | output layer type (supported values: tar, squashfs), ca be both separated by whitespace | tar
 | substitutes | variable substitution in stackerfile, see [stacker.yaml doc](https://github.com/project-stacker/stacker/blob/master/doc/stacker_yaml.md) | None
-| url | remote OCI registry | None
-| tags | one or more tags to give the new image, eparated by whitespace | None
+| url | remote OCI registry + repo name eg: docker://ghcr.io/project-stacker/ | None
+| tags | one or more tags to give the new image, separated by whitespace | None
 | username | used to login to registry | None
-| username | used to login to registry | None
+| password | used to login to registry | None
 | skip-tls | used with unsecure (http) registries | false
 
 
@@ -35,6 +35,12 @@ Build only example:
     layer-type: 'tar squashfs'
 ```
 
+
+Publish url is built according to the next logic:
+```
+input.url + stacker.yaml container name + : + input.tag
+```
+
 Build and push example to ghcr.io:
 
 ```
@@ -44,11 +50,15 @@ Build and push example to ghcr.io:
     stackerfile: 'test/stacker.yaml'
     substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
     layer-type: 'tar squashfs'
-    url: ghcr.io
+    tags: ${{ github.event.release.tag_name }} latest
+    url: docker://ghcr.io/${{ github.repository }}
     username: ${{ github.actor }}
     password: ${{ secrets.GITHUB_TOKEN }}
-    skip-tls: true
 ```
+
+The above action will build test/stacker.yaml and push it to
+1. docker://ghcr.io/project-stacker/stacker/test:latest
+2. docker://ghcr.io/project-stacker/stacker/test:${{ github.event.release.tag_name }}
 
 Build and push example to localhost:
 
@@ -59,6 +69,11 @@ Build and push example to localhost:
     stackerfile: 'test/stacker.yaml'
     substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
     layer-type: 'tar squashfs'
-    url: localhost:5000
+    url: docker://localhost:5000
     skip-tls: true
+    tags: test
 ```
+
+The above action will build test/stacker.yaml and push it to
+1. docker://localhost:5000/test:test
+
