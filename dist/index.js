@@ -23879,9 +23879,9 @@ function run() {
         const stackerPath = yield io.which("stacker", true);
         const cli = new StackerCLI(stackerPath);
         yield cli.execute(["--version"], { group: true });
-        const stackerfile = core.getInput("stackerfile");
+        const stackerfile = core.getInput("file");
         var substitutesList = [];
-        const substitutes = core.getInput("substitutes");
+        const substitutes = core.getInput("build-args");
         if (substitutes != "") {
             substitutesList = substitutes.trim().split(/\s+/);
         }

@@ -37,11 +37,11 @@ export async function run(): Promise<void> {
     await cli.execute(["--version"], { group: true });
 
     // get stacker file path from input
-    const stackerfile = core.getInput("stackerfile");
+    const stackerfile = core.getInput("file");
 
     // get substitutes from input
     var substitutesList: string[] = [];
-    const substitutes = core.getInput("substitutes");
+    const substitutes = core.getInput("build-args");
     if (substitutes != "") {
         substitutesList = substitutes.trim().split(/\s+/);
     }
