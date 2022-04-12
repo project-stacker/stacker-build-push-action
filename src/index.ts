@@ -4,6 +4,7 @@ import * as tc from "@actions/tool-cache";
 
 import { StackerCLI } from "./stacker";
 import * as installer from "./installer";
+import * as utils from "./utils";
 
 export const stackerBin = "stacker";
 export const stackerOrg = "project-stacker";
@@ -37,28 +38,18 @@ export async function run(): Promise<void> {
     await cli.execute(["--version"], { group: true });
 
     // get stacker file path from input
-    const stackerfile = core.getInput("stackerfile");
+    const stackerfile = core.getInput("file");
 
-    // get substitutes from input
-    var substitutesList: string[] = [];
-    const substitutes = core.getInput("substitutes");
-    if (substitutes != "") {
-        substitutesList = substitutes.trim().split(/\s+/);
-    }
+    // get build-args from input
+    const substitutes = utils.getInputList("build-args");
 
-    var layerTypeList: string[] = [];
-    const layerType = core.getInput("layer-type");
-    if (layerType != "") {
-        layerTypeList = layerType.trim().split(/\s+/);
-    }
+    // get layer-type from input
+    const layerTypes = utils.getSpaceSeparatedInput("layer-type");
 
-    await cli.build(stackerfile, layerTypeList, substitutesList);
+    await cli.build(stackerfile, layerTypes, substitutes);
 
-    var tagsList: string[] = [];
-    const tags = core.getInput("tags");
-    if (tags != "") {
-        tagsList = tags.trim().split(/\s+/);
-    }
+    // get tags from input
+    const tags = utils.getSpaceSeparatedInput("tags");
 
     const registryURL = core.getInput("url");
     const username = core.getInput("username");
@@ -66,8 +57,8 @@ export async function run(): Promise<void> {
     const skipTLS = core.getInput("skip-tls") === "true";
 
     if (registryURL) {
-        await cli.publish(stackerfile, layerTypeList, substitutesList,
-            registryURL, tagsList, username, password, skipTLS);
+        await cli.publish(stackerfile, layerTypes, substitutes,
+            registryURL, tags, username, password, skipTLS);
     }
 }
 
