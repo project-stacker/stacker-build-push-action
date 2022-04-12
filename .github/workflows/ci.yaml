@@ -14,56 +14,68 @@ jobs:
         image: registry:2
         ports:
           - 5000:5000
-    name: Test stacker-build action
+    name: Test stacker-build-push-action
     steps:
       - uses: actions/checkout@v2
 
       - name: Run stacker-build with all build inputs
         uses: ./
         with:
-          stackerfile: 'test/stacker.yaml'
-          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+          file: 'test/stacker.yaml'
+          build-args: |
+            SUB1=VAR1
+            SUB2=VAR2
+            SUB3=VAR3
           layer-type: 'tar squashfs'
 
-      - name: Run stacker-build with only substitutes
+      - name: Run stacker-build with only build-args
         uses: ./
         with:
-          stackerfile: 'test/stacker.yaml'
-          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+          file: 'test/stacker.yaml'
+          build-args: |
+            SUB1=VAR1
+            SUB2=VAR2
+            SUB3=VAR3
 
       - name: Run stacker-build with only layer-type
         uses: ./
         with:
-          stackerfile: 'test/stacker_wo_subs.yaml'
+          file: 'test/stacker_wo_subs.yaml'
           layer-type: 'tar squashfs'
 
-      - name: Run stacker-build with only stackerfile
+      - name: Run stacker-build with only file input
         uses: ./
         with:
-          stackerfile: 'test/stacker_wo_subs.yaml'
+          file: 'test/stacker_wo_subs.yaml'
       
       - name: Run stacker-build with push and tags
         uses: ./
         with:
-          stackerfile: 'test/stacker_wo_subs.yaml'
+          file: 'test/stacker_wo_subs.yaml'
           tags: v1 latest
           url: docker://localhost:5000/name/app
           skip-tls: true
       
-      - name: Run stacker-build with push, tags and substitutes
+      - name: Run stacker-build with push, tags and build-args
         uses: ./
         with:
-          stackerfile: 'test/stacker.yaml'
-          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+          file: 'test/stacker.yaml'
+          build-args: |
+            SUB1=VAR1
+            SUB2=VAR2
+            SUB3=VAR3
           tags: v1 latest
           url: docker://localhost:5000/name/app
           skip-tls: true
       
-      - name: Run stacker-build with push, tags, substitutes and layer-type
+      - name: Run stacker-build with push, tags, build-args and layer-type
         uses: ./
         with:
-          stackerfile: 'test/stacker.yaml'
-          substitutes: 'SUB1=VAR1 SUB2=VAR2 SUB3=VAR3'
+          file: 'test/stacker.yaml'
+          build-args: |
+            SUB1=VAR1
+            SUB2=VAR2
+            SUB3=VAR3
           tags: v1 latest
           url: docker://localhost:5000/name/app
           layer-type: 'tar squashfs'

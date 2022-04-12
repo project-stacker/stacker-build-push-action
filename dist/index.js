@@ -23841,6 +23841,31 @@ function makeAvailableInPath(download, version) {
     });
 }
 
+;// CONCATENATED MODULE: ./src/utils.ts
+
+function splitByNewline(s) {
+    return s.split(/\r?\n/);
+}
+function getInputList(name) {
+    const items = core.getInput(name);
+    if (!items) {
+        return [];
+    }
+    const splitItems = splitByNewline(items);
+    return splitItems
+        .reduce((acc, line) => acc.concat(line).map((item) => item.trim()), []);
+}
+function getSpaceSeparatedInput(name) {
+    const items = core.getInput(name);
+    if (items.length === 0) {
+        core.debug("empty");
+        return [];
+    }
+    const splitItems = items.trim().split(/\s+/);
+    return splitItems
+        .reduce((acc, line) => acc.concat(line).map((item) => item.trim()), []);
+}
+
 ;// CONCATENATED MODULE: ./src/index.ts
 var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -23851,6 +23876,7 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 
 
 
@@ -23879,29 +23905,17 @@ function run() {
         const stackerPath = yield io.which("stacker", true);
         const cli = new StackerCLI(stackerPath);
         yield cli.execute(["--version"], { group: true });
-        const stackerfile = core.getInput("stackerfile");
-        var substitutesList = [];
-        const substitutes = core.getInput("substitutes");
-        if (substitutes != "") {
-            substitutesList = substitutes.trim().split(/\s+/);
-        }
-        var layerTypeList = [];
-        const layerType = core.getInput("layer-type");
-        if (layerType != "") {
-            layerTypeList = layerType.trim().split(/\s+/);
-        }
-        yield cli.build(stackerfile, layerTypeList, substitutesList);
-        var tagsList = [];
-        const tags = core.getInput("tags");
-        if (tags != "") {
-            tagsList = tags.trim().split(/\s+/);
-        }
+        const stackerfile = core.getInput("file");
+        const substitutes = getInputList("build-args");
+        const layerTypes = getSpaceSeparatedInput("layer-type");
+        yield cli.build(stackerfile, layerTypes, substitutes);
+        const tags = getSpaceSeparatedInput("tags");
         const registryURL = core.getInput("url");
         const username = core.getInput("username");
         const password = core.getInput("password");
         const skipTLS = core.getInput("skip-tls") === "true";
         if (registryURL) {
-            yield cli.publish(stackerfile, layerTypeList, substitutesList, registryURL, tagsList, username, password, skipTLS);
+            yield cli.publish(stackerfile, layerTypes, substitutes, registryURL, tags, username, password, skipTLS);
         }
     });
 }

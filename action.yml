@@ -5,8 +5,8 @@ inputs:
     description: 'Which stacker version to use'
     required: false
     default: 'latest'
-  stackerfile:  # id of input
-    description: 'Which stackerfile to build'
+  file:
+    description: 'Which stacker file to build'
     required: true
     default: 'stacker.yaml'
   layer-type:
@@ -14,11 +14,11 @@ inputs:
     required: false
     default: "tar"
   token:
-    description: 'Used to pull stacker release binaries'
+    description: 'GitHub Token used to authenticate against a repository for Git context'
     required: false
     default: ${{ github.token }}
-  substitutes:
-    description: 'The list of subtitutes to make in stacker file separated by whitespace, eg: ONE=1 TWO=2 THREE=3'
+  build-args:
+    description: 'The list of build-time arguments separated by whitespace, eg: ONE=1 TWO=2 THREE=3'
     required: false
   tags:
     description: 'Tags used when pushing to remote OCI registry, separated by whitespace'
