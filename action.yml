@@ -1,5 +1,8 @@
 name: 'Stacker build action'
 description: 'Builds OCI images via a declarative yaml format.'
+branding:
+  icon: 'box'
+  color: 'orange'
 inputs:
   version:
     description: 'Which stacker version to use'
