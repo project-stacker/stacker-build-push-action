@@ -1,7 +1,7 @@
 # stacker-build-push-action
 # [![ci](https://github.com/project-stacker/stacker-build-push-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/project-stacker/stacker-build-push-action/actions)
 
-```stacker-build-push-action``` natively builds OCI container images via a declarative yaml format using [`stacker`](https://github.com/project-stacker/stacker) and publish them to OCI conformant registries.
+```stacker-build-push-action``` natively builds OCI container images via a declarative yaml format using [`stacker`](https://github.com/project-stacker/stacker) and publishes them to OCI conformant registries.
 
 
 For more information about stacker tool see: https://github.com/project-stacker/stacker
