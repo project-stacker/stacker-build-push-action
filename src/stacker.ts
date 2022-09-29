@@ -12,6 +12,10 @@ export type CommandResult = {
     error: string
 };
 
+export type ConvertResult = {
+    stackerfile: string
+    subfile: string
+}
 
 export class StackerCLI {
     private readonly executable: string;
@@ -20,8 +24,60 @@ export class StackerCLI {
         this.executable = executable;
     }
 
-    async build(stackerfile: string, layerType: string[], substitutes: string[]): Promise<CommandResult> {
-        const args: string[] = ["--debug", "build"];
+    async convertDockerfile(dockerfile: string): Promise<[Promise<CommandResult>, ConvertResult]> {
+        const args: string[] = ["--debug"];
+
+        const stackerfile = "stacker.yaml"
+        const subfile = "stacker-subs.yaml"
+
+        args.push("convert");
+        args.push("--docker-file");
+        args.push(dockerfile);
+
+        args.push("--output-file");
+        args.push(stackerfile);
+
+        args.push("--substitute-file");
+        args.push(subfile);
+
+        const res = this.execute(args).then((res) => {
+            if (res.exitCode == 0) {
+                core.info("printing resulting stacker.yaml after converting dockerfile");
+                exec.exec('/bin/bash -c "cat stacker.yaml"', []);
+                
+                core.info("printing resulting substitutes file after converting dockerfile");
+                exec.exec('/bin/bash -c "cat stacker-subs.yaml"', []);
+            } 
+
+            return res;
+        })
+
+        const cres : ConvertResult = {
+            stackerfile: stackerfile,
+            subfile: subfile,
+        }
+
+        return [res, cres];
+    }
+
+    async build(stackerfile: string, cachedir: string, stackerdir: string, stackerfilePattern: string,
+        layerType: string[], substitutes: string[], subfile: string): Promise<CommandResult> {
+        const args: string[] = ["--debug"];
+
+        args.push("--stacker-dir");
+        args.push(cachedir);
+
+        if (stackerdir) {
+            args.push("recursive-build");
+            args.push("--search-dir");
+            args.push(stackerdir);
+            args.push("--stacker-file-pattern");
+            args.push(stackerfilePattern);
+        } else {
+            args.push("build")
+            args.push("-f");
+            args.push(stackerfile);
+        }
 
         layerType.forEach((layerType) => {
             args.push("--layer-type");
@@ -33,8 +89,10 @@ export class StackerCLI {
             args.push(substitute);
         })
 
-        args.push("-f");
-        args.push(stackerfile);
+        if (subfile) {
+            args.push("--substitute-file");
+            args.push(subfile);
+        }
 
         const res = this.execute(args).then((res) => {
             if (res.exitCode == 0) {
@@ -48,9 +106,14 @@ export class StackerCLI {
         return res;
     }
 
-    async publish(stackerfile: string, layerType: string[], substitutes: string[],
-        url: string, tags: string[], username: string, password: string, skipTLS: boolean): Promise<CommandResult> {
-        const args: string[] = ["--debug", "publish"];
+    async publish(stackerfile: string, cachedir: string, stackerdir: string, stackerfilePattern: string, layerType: string[], substitutes: string[],
+        subfile: string, url: string, tags: string[], username: string, password: string, skipTLS: boolean): Promise<CommandResult> {
+        const args: string[] = ["--debug"];
+
+        args.push("--stacker-dir");
+        args.push(cachedir);
+
+        args.push("publish");
 
         layerType.forEach((layerType) => {
             args.push("--layer-type");
@@ -61,6 +124,11 @@ export class StackerCLI {
             args.push("--substitute");
             args.push(substitute);
         });
+
+        if (subfile) {
+            args.push("--substitute-file");
+            args.push(subfile);
+        }
 
         args.push("--url");
         args.push(url);
@@ -84,8 +152,15 @@ export class StackerCLI {
             args.push("--skip-tls");
         }
 
-        args.push("-f");
-        args.push(stackerfile);
+        if (stackerdir) {
+            args.push("--search-dir");
+            args.push(stackerdir);
+            args.push("--stacker-file-pattern");
+            args.push(stackerfilePattern);
+        } else {
+            args.push("-f");
+            args.push(stackerfile); 
+        }
 
         return this.execute(args);
     }

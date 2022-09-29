@@ -5,13 +5,27 @@ branding:
   color: 'blue'
 inputs:
   version:
-    description: 'Which stacker version to use'
+    description: 'Which stacker version to use, eg v0.40.3 see: https://github.com/project-stacker/stacker/releases'
     required: false
-    default: 'latest'
+    default: 'v1.0.0-rc8'
   file:
     description: 'Which stacker file to build'
-    required: true
+    required: false
     default: 'stacker.yaml'
+  dockerfile:
+    description: 'Which dockerfile to build(will be converted to stacker.yaml)'
+    required: false
+  cache-dir:
+    description: "stacker's cache directory"
+    required: false
+    default: '.stacker'
+  dir:
+    description: 'directory under which to recursively search for stackerfiles to build'
+    required: false
+  file-pattern:
+    description: 'regex pattern to use when searching for stackerfile paths, used with dir arg'
+    required: false
+    default: '\\/stacker.yaml$'
   layer-type:
     description: 'Set the output layer type (supported values: tar, squashfs) separated by whitespace'
     required: false
@@ -30,13 +44,13 @@ inputs:
     description: 'Remote registry URL, eg: docker://ghcr.io/myRepo'
     required: false
   username:
-    description: "Username for the remote registry"
+    description: 'Username for the remote registry'
     required: false
   password:
-    description: "Password for the remote registry"
+    description: 'Password for the remote registry'
     required: false
   skip-tls:
-    description: "Skip tls verify on unsecure http registry"
+    description: 'Skip tls verify on unsecure http registry'
     required: false
 runs:
   using: 'node16'

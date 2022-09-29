@@ -11,13 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     services:
       registry:
-        image: registry:2
+        image: ghcr.io/project-zot/zot-linux-amd64:latest
         ports:
           - 5000:5000
     name: Test stacker-build-push-action
     steps:
       - uses: actions/checkout@v2
 
+      - name: Run stacker-build with a Dockerfile
+        uses: ./
+        with:
+          dockerfile: 'test/Dockerfile'
+          tags: v1 latest
+          url: docker://localhost:5000/four/app
+          layer-type: 'tar squashfs'
+          skip-tls: true
+          
       - name: Run stacker-build with all build inputs
         uses: ./
         with:
@@ -53,7 +62,7 @@ jobs:
         with:
           file: 'test/stacker_wo_subs.yaml'
           tags: v1 latest
-          url: docker://localhost:5000/name/app
+          url: docker://localhost:5000/one/app
           skip-tls: true
       
       - name: Run stacker-build with push, tags and build-args
@@ -65,7 +74,7 @@ jobs:
             SUB2=VAR2
             SUB3=VAR3
           tags: v1 latest
-          url: docker://localhost:5000/name/app
+          url: docker://localhost:5000/two/app
           skip-tls: true
       
       - name: Run stacker-build with push, tags, build-args and layer-type
@@ -77,6 +86,15 @@ jobs:
             SUB2=VAR2
             SUB3=VAR3
           tags: v1 latest
-          url: docker://localhost:5000/name/app
+          url: docker://localhost:5000/three/app
+          layer-type: 'tar squashfs'
+          skip-tls: true
+
+      - name: Run stacker recursive-build
+        uses: ./
+        with:
+          dir: 'test/builds'
+          tags: v2
+          url: docker://localhost:5000/five/app
           layer-type: 'tar squashfs'
           skip-tls: true

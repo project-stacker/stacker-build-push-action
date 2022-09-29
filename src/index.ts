@@ -31,33 +31,58 @@ export async function run(): Promise<void> {
     }
 
     // get stacker cli
-    const stackerPath = await io.which("stacker", true);
+    const stackerPath = await io.which(stackerBin, true);
     const cli: StackerCLI = new StackerCLI(stackerPath);
 
     // print stacker version
     await cli.execute(["--version"], { group: true });
 
+    // get stacker cache dir
+    const cachedir = core.getInput("cache-dir");
+
     // get stacker file path from input
-    const stackerfile = core.getInput("file");
+    var stackerfile = core.getInput("file");
+
+    // get dockerfile path from input if any
+    const dockerfile = core.getInput('dockerfile');
+
+    // get stacker dir to recursive search for stacker files
+    const stackerdir = core.getInput("dir");
+
+    // get stacker file pattern
+    const stackerfilePattern = core.getInput("file-pattern");
 
     // get build-args from input
     const substitutes = utils.getInputList("build-args");
 
+    // get build-args file from input
+    var subfile = core.getInput("build-args-file");
+
     // get layer-type from input
     const layerTypes = utils.getSpaceSeparatedInput("layer-type");
 
-    await cli.build(stackerfile, layerTypes, substitutes);
+    core.info(`dockerfile val: ${dockerfile}`);
+    if (dockerfile) {
+        let [cmdRes, convertRes] = await cli.convertDockerfile(dockerfile);
 
-    // get tags from input
-    const tags = utils.getSpaceSeparatedInput("tags");
+        if (convertRes && (await cmdRes).exitCode == 0) {
+            // update stackerfile, subfile values
+            stackerfile = convertRes.stackerfile;
+            subfile = convertRes.subfile;
+        }   
+    }
+
+    await cli.build(stackerfile, cachedir, stackerdir, stackerfilePattern, layerTypes, substitutes, subfile);
 
     const registryURL = core.getInput("url");
-    const username = core.getInput("username");
-    const password = core.getInput("password");
-    const skipTLS = core.getInput("skip-tls") === "true";
-
     if (registryURL) {
-        await cli.publish(stackerfile, layerTypes, substitutes,
+        // get tags from input
+        const tags = utils.getSpaceSeparatedInput("tags");
+        const username = core.getInput("username");
+        const password = core.getInput("password");
+        const skipTLS = core.getInput("skip-tls") === "true";
+    
+        await cli.publish(stackerfile, cachedir, stackerdir, stackerfilePattern, layerTypes, substitutes, subfile,
             registryURL, tags, username, password, skipTLS);
     }
 }
