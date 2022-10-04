@@ -2,7 +2,7 @@
     <img src="https://github.com/project-stacker/assets/blob/main/images/logo/stacker-logo-text.png" alt="stacker" height="130"/>
 </p>
 
-# stacker-build-push-action
+# Stacker Build and Push Action
 # [![ci](https://github.com/project-stacker/stacker-build-push-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/project-stacker/stacker-build-push-action/actions)
 
 ```stacker-build-push-action``` natively builds OCI container images via a declarative yaml format using [`stacker`](https://github.com/project-stacker/stacker) and publishes them to OCI conformant registries.
@@ -17,7 +17,7 @@ For more information about stacker tool see: https://github.com/project-stacker/
 | Input Name | Type |  Description | Default |
 | ---------- | ---- |----------- | ------- |
 | file | string |the yaml file to be built as an OCI image, example: [stacker.yaml](./test/stacker.yaml)  | stacker.yaml
-| layer-type | list | output layer type (supported values: tar, squashfs), ca be both separated by whitespace | tar
+| layer-type | list | output layer type (supported values: tar, squashfs), can be both separated by whitespace | tar
 | build-args | list | the list of build-time arguments (subtitutes) separated by newline, see [stacker.yaml doc](https://github.com/project-stacker/stacker/blob/master/doc/stacker_yaml.md) | None
 | url | string | remote OCI registry + repo name eg: docker://ghcr.io/project-stacker/ | None
 | tags | list | one or more tags to give the new image, separated by whitespace | None

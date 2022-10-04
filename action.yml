@@ -1,8 +1,8 @@
-name: 'Stacker build action'
-description: 'Builds OCI images via a declarative yaml format.'
+name: 'Stacker Build and Push Action'
+description: 'Build and push OCI images via a declarative yaml format.'
 branding:
-  icon: 'box'
-  color: 'orange'
+  icon: 'align-justify'
+  color: 'blue'
 inputs:
   version:
     description: 'Which stacker version to use'
