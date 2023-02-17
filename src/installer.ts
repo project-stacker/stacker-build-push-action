@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
+import * as github from '@actions/github';
 import * as exec from "@actions/exec";
 import * as tc from "@actions/tool-cache";
-import { Octokit } from "octokit";
 import path from "path";
 import { stackerBin, stackerRepo, stackerOrg } from "src";
 
@@ -10,7 +10,7 @@ export async function resolveReleaseData() {
     let version = core.getInput('version');
     let token = core.getInput('token');
 
-    const octokit = new Octokit();
+    const octokit = github.getOctokit(token);
 
     let releaseData: any = {}
 
@@ -19,9 +19,6 @@ export async function resolveReleaseData() {
         releaseData = await octokit.rest.repos.getLatestRelease({
             "owner": stackerOrg,
             "repo": stackerRepo,
-            "header": {
-                authorization: `token ${token}`,
-            }
         });
     } else {
         core.info(`Get release info for release ${version}`)
