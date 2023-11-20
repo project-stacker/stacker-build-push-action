@@ -64,6 +64,8 @@ export class StackerCLI {
         layerType: string[], substitutes: string[], subfile: string): Promise<CommandResult> {
         const args: string[] = ["--debug"];
 
+        core.info(`building`);
+
         args.push("--stacker-dir");
         args.push(cachedir);
 
@@ -102,13 +104,15 @@ export class StackerCLI {
 
             return res;
         })
-
+        
         return res;
     }
 
     async publish(stackerfile: string, cachedir: string, stackerdir: string, stackerfilePattern: string, layerType: string[], substitutes: string[],
         subfile: string, url: string, tags: string[], username: string, password: string, skipTLS: boolean): Promise<CommandResult> {
         const args: string[] = ["--debug"];
+
+        core.info(`publishing`);
 
         args.push("--stacker-dir");
         args.push(cachedir);

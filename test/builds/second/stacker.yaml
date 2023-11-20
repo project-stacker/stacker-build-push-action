@@ -1,12 +1,12 @@
 config:
     prerequisites:
-        - ../sub1/stacker.yaml
+        - ../first/stacker.yaml
 layer2:
     from:
         type: built
         tag: layer1_1
     import:
-        - import2
+        - importfile2
     run: |
-        cp /stacker/imports/import2 /root/import2
-        cp /root/import1 /root/import1_copied
+        cp /stacker/imports/importfile2 /root/importfile2
+        cp /root/importfile1 /root/importfile1_copied

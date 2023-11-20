@@ -17,7 +17,6 @@ jobs:
     name: Test stacker-build-push-action
     steps:
       - uses: actions/checkout@v2
-
       - name: Run stacker-build with a Dockerfile
         uses: ./
         with:
@@ -98,3 +97,35 @@ jobs:
           url: docker://localhost:5000/five/app
           layer-type: 'tar squashfs'
           skip-tls: true
+
+      - name: Run stacker-build with push, tags, build-args and layer-type(squashfs)
+        uses: ./
+        with:
+          file: 'test/stacker.yaml'
+          build-args: |
+            SUB1=VAR1
+            SUB2=VAR2
+            SUB3=VAR3
+          tags: v1 latest
+          url: docker://localhost:5000/six/app
+          layer-type: 'squashfs'
+          skip-tls: true
+
+      - name: Check images were published
+        run: |
+          docker pull localhost:5000/one/app/test:v1
+          docker pull localhost:5000/one/app/test
+          docker pull localhost:5000/two/app/test:v1
+          docker pull localhost:5000/two/app/test
+          docker pull localhost:5000/three/app/test:v1
+          docker pull localhost:5000/three/app/test
+          docker pull localhost:5000/four/app/app:v1
+          docker pull localhost:5000/four/app/app
+          docker pull localhost:5000/five/app/layer3_1:v2
+          docker pull localhost:5000/five/app/layer3_1:v2
+
+          # check squashfs
+          curl http://localhost:5000/v2/six/app/test/manifests/v1-squashfs
+          curl http://localhost:5000/v2/six/app/test/manifests/latest-squashfs
+          curl http://localhost:5000/v2/five/app/layer3_2/manifests/v2-squashfs
+          curl http://localhost:5000/v2/five/app/layer3_1/manifests/v2-squashfs

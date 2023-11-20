@@ -12462,6 +12462,7 @@ class StackerCLI {
     build(stackerfile, cachedir, stackerdir, stackerfilePattern, layerType, substitutes, subfile) {
         return __awaiter(this, void 0, void 0, function* () {
             const args = ["--debug"];
+            core.info(`building`);
             args.push("--stacker-dir");
             args.push(cachedir);
             if (stackerdir) {
@@ -12501,6 +12502,7 @@ class StackerCLI {
     publish(stackerfile, cachedir, stackerdir, stackerfilePattern, layerType, substitutes, subfile, url, tags, username, password, skipTLS) {
         return __awaiter(this, void 0, void 0, function* () {
             const args = ["--debug"];
+            core.info(`publishing`);
             args.push("--stacker-dir");
             args.push(cachedir);
             args.push("publish");
@@ -12732,7 +12734,6 @@ function run() {
         const substitutes = getInputList("build-args");
         var subfile = core.getInput("build-args-file");
         const layerTypes = getSpaceSeparatedInput("layer-type");
-        core.info(`dockerfile val: ${dockerfile}`);
         if (dockerfile) {
             let [cmdRes, convertRes] = yield cli.convertDockerfile(dockerfile);
             if (convertRes && (yield cmdRes).exitCode == 0) {
