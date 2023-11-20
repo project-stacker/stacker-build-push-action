@@ -61,7 +61,6 @@ export async function run(): Promise<void> {
     // get layer-type from input
     const layerTypes = utils.getSpaceSeparatedInput("layer-type");
 
-    core.info(`dockerfile val: ${dockerfile}`);
     if (dockerfile) {
         let [cmdRes, convertRes] = await cli.convertDockerfile(dockerfile);
 

@@ -25,7 +25,7 @@ inputs:
   file-pattern:
     description: 'regex pattern to use when searching for stackerfile paths, used with dir arg'
     required: false
-    default: '\\/stacker.yaml$'
+    default: 'stacker.yaml'
   layer-type:
     description: 'Set the output layer type (supported values: tar, squashfs) separated by whitespace'
     required: false
@@ -41,7 +41,7 @@ inputs:
     description: 'Tags used when pushing to remote OCI registry, separated by whitespace'
     required: false
   url:
-    description: 'Remote registry URL, eg: docker://ghcr.io/myRepo'
+    description: 'Remote registry URL, eg: docker://ghcr.io/myrepo'
     required: false
   username:
     description: 'Username for the remote registry'
